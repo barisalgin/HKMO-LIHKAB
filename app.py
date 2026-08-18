@@ -43,12 +43,12 @@ if not st.session_state["authenticated"]:
     with col2:
         with st.container(border=True):
             if os.path.exists("Logo273x87.png"):
-                st.image("Logo273x87.png", use_container_width=True)
+                st.image("Logo273x87.png", use_column_width=True)
             st.markdown("<h2 style='text-align: center;'>🔐 LİHKAB Girişi</h2>", unsafe_allow_html=True)
             st.markdown("<p style='text-align: center; color: gray;'>Sisteme erişmek için yetkilendirilmiş bir hesaba ihtiyacınız var.</p>", unsafe_allow_html=True)
             login_user = st.text_input("Kullanıcı Adı")
             login_pass = st.text_input("Şifre", type="password")
-            if st.button("Giriş Yap", type="primary", use_container_width=True):
+            if st.button("Giriş Yap", type="primary", use_column_width=True):
                 from core import verify_user
                 perms = verify_user(login_user, login_pass)
                 if perms is not None:
@@ -137,7 +137,7 @@ with tab1:
         df["Toplam İş Kazancı (₺)"] = df["Toplam İş Kazancı (₺)"].apply(lambda x: f"{x:,.2f} ₺")
         df["Toplam Ulaşım Kazancı (₺)"] = df["Toplam Ulaşım Kazancı (₺)"].apply(lambda x: f"{x:,.2f} ₺")
         df.index = df.index + 1
-        st.dataframe(df, use_container_width=True)
+        st.dataframe(df, use_column_width=True)
     else:
         st.info("Sistemde henüz kayıtlı LİHKAB bürosu bulunmamaktadır.")
 
@@ -330,7 +330,7 @@ with tab4:
             
         df_ui = df_gosterim.copy()
         df_ui["Fiyat (₺)"] = df_ui["Fiyat (₺)"].apply(lambda x: f"{x:,.2f} ₺")
-        st.dataframe(df_ui, use_container_width=True)
+        st.dataframe(df_ui, use_column_width=True)
         
         import io
         buffer = io.BytesIO()
@@ -445,7 +445,7 @@ with tab5:
                 labels=dict(x="İşi Yapan Büronun İlçesi", y="İşin Çıktığı İlçe", color="İş Sayısı"),
                 aspect="auto"
             )
-            st.plotly_chart(fig_heatmap, use_container_width=True)
+            st.plotly_chart(fig_heatmap, use_column_width=True)
             
         st.write("<hr>", unsafe_allow_html=True)
         
@@ -457,14 +457,14 @@ with tab5:
             job_counts = df_ana["İş Türü"].value_counts().reset_index()
             job_counts.columns = ["İş Türü", "Adet"]
             fig_pie_jobs = px.pie(job_counts, values="Adet", names="İş Türü", title="İş Türlerine Göre Dağılım", hole=0.3)
-            st.plotly_chart(fig_pie_jobs, use_container_width=True)
+            st.plotly_chart(fig_pie_jobs, use_column_width=True)
             
         with col_pie2:
             # Hangi ilçeden ne kadar iş çıkmış?
             dist_counts = df_ana["İşin Çıktığı İlçe"].value_counts().reset_index()
             dist_counts.columns = ["İlçe", "Adet"]
             fig_pie_dist = px.pie(dist_counts, values="Adet", names="İlçe", title="İşlerin Çıktığı İlçelere Göre Dağılım", hole=0.3)
-            st.plotly_chart(fig_pie_dist, use_container_width=True)
+            st.plotly_chart(fig_pie_dist, use_column_width=True)
 
 with tab6:
     st.header("⚙️ Büro Yönetimi (Düzenle / Pasife Al / Sil)")
