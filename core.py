@@ -82,6 +82,7 @@ DISTRICT_PROXIMITY = {
     "Harmancık": ["Büyükorhan", "Orhaneli", "Keles", "Mustafakemalpaşa", "Osmangazi", "Nilüfer", "Yıldırım", "Gürsu", "Kestel", "İnegöl", "Karacabey", "Mudanya", "Gemlik", "Yenişehir", "Orhangazi", "İznik"]
 }
 
+@st.cache_data(ttl=3600)
 def get_districts():
     conn = get_connection()
     cursor = conn.cursor()
@@ -90,6 +91,7 @@ def get_districts():
     conn.close()
     return districts
 
+@st.cache_data(ttl=60)
 def get_lihkabs():
     conn = get_connection()
     cursor = conn.cursor()
@@ -98,6 +100,7 @@ def get_lihkabs():
     conn.close()
     return lihkabs
 
+@st.cache_data(ttl=60)
 def get_jobs_history():
     conn = get_connection()
     cursor = conn.cursor()
@@ -219,6 +222,7 @@ def assign_job(job_name, district_id, params, username="Sistem"):
         ''', (price, transport_price, chosen_lihkab_id))
         
         conn.commit()
+        st.cache_data.clear()
     else:
         chosen_lihkab_id = None
         
@@ -240,6 +244,7 @@ def add_lihkab(name, owner, active_district_id, address="", registry_number="", 
     ''', (name, owner, active_district_id, avg_revenue, address, registry_number, university))
     
     conn.commit()
+    st.cache_data.clear()
     conn.close()
 
 def update_lihkab(lihkab_id, new_name, new_owner, new_active_district_id, new_address="", new_registry_number="", new_university=""):
@@ -250,6 +255,7 @@ def update_lihkab(lihkab_id, new_name, new_owner, new_active_district_id, new_ad
         WHERE id = %s
     ''', (new_name, new_owner, new_active_district_id, new_address, new_registry_number, new_university, lihkab_id))
     conn.commit()
+    st.cache_data.clear()
     conn.close()
 
 def delete_lihkab(lihkab_id):
@@ -257,6 +263,7 @@ def delete_lihkab(lihkab_id):
     cursor = conn.cursor()
     cursor.execute("UPDATE lihkabs SET is_deleted = TRUE WHERE id = %s", (lihkab_id,))
     conn.commit()
+    st.cache_data.clear()
     conn.close()
 
 def toggle_lihkab_status(lihkab_id, current_status):
@@ -265,6 +272,7 @@ def toggle_lihkab_status(lihkab_id, current_status):
     new_status = 0 if current_status == 1 else 1
     cursor.execute("UPDATE lihkabs SET is_active = %s WHERE id = %s", (new_status, lihkab_id))
     conn.commit()
+    st.cache_data.clear()
     conn.close()
 
 def delete_job(job_id):
@@ -283,6 +291,7 @@ def delete_job(job_id):
         cursor.execute("UPDATE lihkabs SET total_revenue = total_revenue - %s WHERE id = %s", (price, lihkab_id))
         
     conn.commit()
+    st.cache_data.clear()
     conn.close()
 
 def clear_all_jobs():
@@ -294,6 +303,7 @@ def clear_all_jobs():
     cursor.execute("UPDATE lihkabs SET total_revenue = 0, total_transport_revenue = 0")
     
     conn.commit()
+    st.cache_data.clear()
     conn.close()
 
 # --- User Auth Functions ---
@@ -354,6 +364,7 @@ def add_user_db(username, password, can_assign_job=0, can_add_office=0, can_mana
         # Fallback if DB not migrated
         cursor.execute("INSERT INTO users (username, password_hash) VALUES (%s, %s)", (username, hashed))
     conn.commit()
+    st.cache_data.clear()
     conn.close()
     return True
 
@@ -362,6 +373,7 @@ def delete_user_db(user_id):
     cursor = conn.cursor()
     cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
     conn.commit()
+    st.cache_data.clear()
     conn.close()
 
 def change_password_db(user_id, new_password):
@@ -370,6 +382,7 @@ def change_password_db(user_id, new_password):
     cursor = conn.cursor()
     cursor.execute("UPDATE users SET password_hash = %s WHERE id = %s", (hashed, user_id))
     conn.commit()
+    st.cache_data.clear()
     conn.close()
 
 def update_user_permissions_db(user_id, can_assign_job, can_add_office, can_manage_office, can_fix_errors):
@@ -382,6 +395,7 @@ def update_user_permissions_db(user_id, can_assign_job, can_add_office, can_mana
             WHERE id = %s
         ''', (can_assign_job, can_add_office, can_manage_office, can_fix_errors, user_id))
         conn.commit()
+        st.cache_data.clear()
     except sqlite3.OperationalError:
         pass # Ignore if not migrated
     conn.close()
