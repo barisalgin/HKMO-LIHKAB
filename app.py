@@ -7,7 +7,7 @@ import os
 from core import get_lihkabs, get_jobs_history, get_districts, assign_job, add_lihkab, update_lihkab, toggle_lihkab_status, delete_lihkab, delete_job, clear_all_jobs
 from hkmo_pricing import JOB_DEFINITIONS
 
-st.set_page_config(page_title="HKMO Bursa Şube LİHKAB İş Arayüzü", page_icon="logo273x87.png", layout="wide")
+st.set_page_config(page_title="HKMO Bursa Şube LİHKAB İş Arayüzü", page_icon="Logo273x87.png", layout="wide")
 
 def set_background(image_path):
     if os.path.exists(image_path):
@@ -28,7 +28,7 @@ def set_background(image_path):
             unsafe_allow_html=True
         )
 
-set_background("logo273x87.png")
+set_background("Logo273x87.png")
 
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
@@ -42,8 +42,8 @@ if not st.session_state["authenticated"]:
     col1, col2, col3 = st.columns([1.5, 2, 1.5])
     with col2:
         with st.container(border=True):
-            if os.path.exists("logo273x87.png"):
-                st.image("logo273x87.png", use_container_width=True)
+            if os.path.exists("Logo273x87.png"):
+                st.image("Logo273x87.png", use_container_width=True)
             st.markdown("<h2 style='text-align: center;'>🔐 LİHKAB Girişi</h2>", unsafe_allow_html=True)
             st.markdown("<p style='text-align: center; color: gray;'>Sisteme erişmek için yetkilendirilmiş bir hesaba ihtiyacınız var.</p>", unsafe_allow_html=True)
             login_user = st.text_input("Kullanıcı Adı")
