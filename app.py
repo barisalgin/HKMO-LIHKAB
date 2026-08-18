@@ -445,25 +445,43 @@ with tab5:
                 labels=dict(x="İşi Yapan Büronun İlçesi", y="İşin Çıktığı İlçe", color="İş Sayısı"),
                 aspect="auto"
             )
+
             st.plotly_chart(fig_heatmap, use_container_width=True)
+            
+            st.write("<br>", unsafe_allow_html=True)
+            st.subheader("2. Büroların Çalışma Alanları (Büro - İlçe Matrisi)")
+            st.write("Bu tablo, sistemdeki LİHKAB bürolarının hangi ilçelerden ne kadar iş aldığını detaylı olarak gösterir.")
+            
+            crosstab_buro_ilce = pd.crosstab(df_ana["Atanan Büro"], df_ana["İşin Çıktığı İlçe"])
+            fig_heatmap2 = px.imshow(
+                crosstab_buro_ilce,
+                text_auto=True,
+                color_continuous_scale='Blues',
+                labels=dict(x="İşin Çıktığı İlçe", y="LİHKAB Bürosu", color="İş Sayısı"),
+                aspect="auto"
+            )
+            st.plotly_chart(fig_heatmap2, use_container_width=True)
+
             
         st.write("<hr>", unsafe_allow_html=True)
         
-        st.subheader("2. İş Kalemleri Dağılımı")
+        st.subheader("3. İş Kalemleri Dağılımı")
         col_pie1, col_pie2 = st.columns(2)
         
         with col_pie1:
-            # Hangi işten kaç tane var?
             job_counts = df_ana["İş Türü"].value_counts().reset_index()
             job_counts.columns = ["İş Türü", "Adet"]
-            fig_pie_jobs = px.pie(job_counts, values="Adet", names="İş Türü", title="İş Türlerine Göre Dağılım", hole=0.3)
+            fig_pie_jobs = px.pie(job_counts, values="Adet", names="İş Türü", title="🎯 İş Türlerine Göre Dağılım", hole=0.45, color_discrete_sequence=px.colors.qualitative.Vivid)
+            fig_pie_jobs.update_traces(textposition='inside', textinfo='percent+label', marker=dict(line=dict(color='#FFFFFF', width=1.5)))
+            fig_pie_jobs.update_layout(showlegend=False, margin=dict(t=50, b=20, l=20, r=20))
             st.plotly_chart(fig_pie_jobs, use_container_width=True)
             
         with col_pie2:
-            # Hangi ilçeden ne kadar iş çıkmış?
             dist_counts = df_ana["İşin Çıktığı İlçe"].value_counts().reset_index()
             dist_counts.columns = ["İlçe", "Adet"]
-            fig_pie_dist = px.pie(dist_counts, values="Adet", names="İlçe", title="İşlerin Çıktığı İlçelere Göre Dağılım", hole=0.3)
+            fig_pie_dist = px.pie(dist_counts, values="Adet", names="İlçe", title="📍 İşlerin Çıktığı İlçelere Göre Dağılım", hole=0.45, color_discrete_sequence=px.colors.qualitative.Pastel)
+            fig_pie_dist.update_traces(textposition='inside', textinfo='percent+label', marker=dict(line=dict(color='#FFFFFF', width=1.5)))
+            fig_pie_dist.update_layout(showlegend=False, margin=dict(t=50, b=20, l=20, r=20))
             st.plotly_chart(fig_pie_dist, use_container_width=True)
 
 with tab6:
