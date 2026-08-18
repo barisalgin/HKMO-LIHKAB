@@ -91,7 +91,7 @@ def get_districts():
 def get_lihkabs():
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, name, owner, active_district_id, total_revenue, is_active, address, registry_number, university, total_transport_revenue FROM lihkabs WHERE is_deleted = 0 ORDER BY total_revenue ASC")
+    cursor.execute("SELECT id, name, owner, active_district_id, total_revenue, is_active, address, registry_number, university, total_transport_revenue FROM lihkabs WHERE is_deleted = FALSE ORDER BY total_revenue ASC")
     lihkabs = cursor.fetchall()
     conn.close()
     return lihkabs
@@ -138,7 +138,7 @@ def assign_job(job_name, district_id, params, username="Sistem"):
     reverse_dist_map = {row[0]: row[1] for row in cursor.fetchall()}
     
     # 3. Aktif tüm LİHKAB'ları çek
-    cursor.execute("SELECT id, active_district_id, total_revenue FROM lihkabs WHERE is_active = 1 AND is_deleted = 0")
+    cursor.execute("SELECT id, active_district_id, total_revenue FROM lihkabs WHERE is_active = TRUE AND is_deleted = FALSE")
     all_lihkabs = cursor.fetchall()
     
     if not all_lihkabs:
@@ -253,7 +253,7 @@ def update_lihkab(lihkab_id, new_name, new_owner, new_active_district_id, new_ad
 def delete_lihkab(lihkab_id):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("UPDATE lihkabs SET is_deleted = 1 WHERE id = %s", (lihkab_id,))
+    cursor.execute("UPDATE lihkabs SET is_deleted = TRUE WHERE id = %s", (lihkab_id,))
     conn.commit()
     conn.close()
 
@@ -303,10 +303,10 @@ def verify_user(username, password):
     # If the migration hasn't run yet, we might get an error selecting new columns.
     # We will try to fetch them, fallback if not exist.
     try:
-        cursor.execute("SELECT password_hash, can_assign_job, can_add_office, can_manage_office, can_fix_errors FROM users WHERE username = %s AND is_active = 1", (username,))
+        cursor.execute("SELECT password_hash, can_assign_job, can_add_office, can_manage_office, can_fix_errors FROM users WHERE username = %s AND is_active = TRUE", (username,))
         row = cursor.fetchone()
     except sqlite3.OperationalError:
-        cursor.execute("SELECT password_hash FROM users WHERE username = %s AND is_active = 1", (username,))
+        cursor.execute("SELECT password_hash FROM users WHERE username = %s AND is_active = TRUE", (username,))
         row = cursor.fetchone()
         if row:
             row = (row[0], 0, 0, 0, 0)
@@ -329,7 +329,7 @@ def get_users():
     try:
         cursor.execute("SELECT id, username, is_active, can_assign_job, can_add_office, can_manage_office, can_fix_errors FROM users")
     except sqlite3.OperationalError:
-        cursor.execute("SELECT id, username, is_active, 0, 0, 0, 0 FROM users")
+        cursor.execute("SELECT id, username, is_active, FALSE, FALSE, FALSE, FALSE FROM users")
     users = cursor.fetchall()
     conn.close()
     return users
