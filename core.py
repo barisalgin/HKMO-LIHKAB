@@ -211,8 +211,8 @@ def assign_job(job_name, district_id, params, username="Sistem"):
         
         cursor.execute('''
             UPDATE lihkabs 
-            SET total_revenue = total_revenue + ?, 
-                total_transport_revenue = total_transport_revenue + ? 
+            SET total_revenue = total_revenue + %s, 
+                total_transport_revenue = total_transport_revenue + %s 
             WHERE id = %s
         ''', (price, transport_price, chosen_lihkab_id))
         
@@ -244,7 +244,7 @@ def update_lihkab(lihkab_id, new_name, new_owner, new_active_district_id, new_ad
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        UPDATE lihkabs SET name = ?, owner = ?, active_district_id = ?, address = ?, registry_number = ?, university = ?
+        UPDATE lihkabs SET name = %s, owner = %s, active_district_id = %s, address = %s, registry_number = %s, university = %s
         WHERE id = %s
     ''', (new_name, new_owner, new_active_district_id, new_address, new_registry_number, new_university, lihkab_id))
     conn.commit()
@@ -346,7 +346,7 @@ def add_user_db(username, password, can_assign_job=0, can_add_office=0, can_mana
     try:
         cursor.execute('''
             INSERT INTO users (username, password_hash, can_assign_job, can_add_office, can_manage_office, can_fix_errors) 
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s)
         ''', (username, hashed, can_assign_job, can_add_office, can_manage_office, can_fix_errors))
     except sqlite3.OperationalError:
         # Fallback if DB not migrated
@@ -376,7 +376,7 @@ def update_user_permissions_db(user_id, can_assign_job, can_add_office, can_mana
     try:
         cursor.execute('''
             UPDATE users 
-            SET can_assign_job = ?, can_add_office = ?, can_manage_office = ?, can_fix_errors = ? 
+            SET can_assign_job = %s, can_add_office = %s, can_manage_office = %s, can_fix_errors = %s 
             WHERE id = %s
         ''', (can_assign_job, can_add_office, can_manage_office, can_fix_errors, user_id))
         conn.commit()
