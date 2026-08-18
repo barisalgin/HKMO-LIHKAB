@@ -3,6 +3,7 @@ import json
 from database import get_connection
 from hkmo_pricing import calculate_price
 import urllib.request
+import streamlit as st
 import math
 
 DISTRICT_COORDS = {
@@ -41,6 +42,7 @@ def get_distance_km(dist_a, dist_b):
     c = 2 * math.asin(math.sqrt(a))
     return R * c * 1.3 # 1.3 road multiplier
 
+@st.cache_data(ttl=3600)
 def get_fuel_price():
     try:
         req = urllib.request.Request(
@@ -202,7 +204,7 @@ def assign_job(job_name, district_id, params, username="Sistem"):
         # Ulaşım Bedeli Hesaplama
         fuel_price = get_fuel_price()
         km_distance = get_distance_km(chosen_lihkab_dist_name, target_dist_name)
-        transport_price = max(1000.0, fuel_price * 0.09 * km_distance)
+        transport_price = max(1000.0, fuel_price * 0.09 * (km_distance * 2))
         
         cursor.execute('''
             INSERT INTO jobs (job_name, district_id, lihkab_id, price, transport_price, parameters_json, created_by)
@@ -289,7 +291,7 @@ def clear_all_jobs():
     # Delete all jobs
     cursor.execute("DELETE FROM jobs")
     # Reset all LİHKAB revenues to 0
-    cursor.execute("UPDATE lihkabs SET total_revenue = 0")
+    cursor.execute("UPDATE lihkabs SET total_revenue = 0, total_transport_revenue = 0")
     
     conn.commit()
     conn.close()
