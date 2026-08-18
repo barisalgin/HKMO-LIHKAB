@@ -54,7 +54,7 @@ if not st.session_state["authenticated"]:
                 if perms is not None:
                     st.session_state["authenticated"] = True
                     st.session_state["username"] = login_user
-                    if login_user == "barisalgin":
+                    if login_user in ["barisalgin", "admin"]:
                         st.session_state["permissions"] = {
                             "can_assign_job": True,
                             "can_add_office": True,
@@ -561,8 +561,8 @@ with tab7:
         st.success(st.session_state["admin_msg"])
         del st.session_state["admin_msg"]
 
-    if st.session_state["username"] != "barisalgin":
-        st.warning("⚠️ Yeni kullanıcı ekleme, silme ve yetki düzenleme yetkisi sadece sistem kurucusuna (barisalgin) aittir.", icon="⛔")
+    if st.session_state["username"] not in ["barisalgin", "admin"]:
+        st.warning("⚠️ Yeni kullanıcı ekleme, silme ve yetki düzenleme yetkisi sadece sistem kurucusuna (barisalgin/admin) aittir.", icon="⛔")
         st.write("Ancak kendi şifrenizi aşağıdan değiştirebilirsiniz:")
         
         users = get_users()
@@ -644,7 +644,7 @@ with tab7:
                     if st.button("🗑️ Kullanıcıyı Sistemden Sil"):
                         if selected_u == st.session_state["username"]:
                             st.error("Şu anda aktif olduğunuz hesabı silemezsiniz!")
-                        elif selected_u == "barisalgin":
+                        elif selected_u in ["barisalgin", "admin"]:
                             st.error("Sistem yöneticisini silemezsiniz!")
                         else:
                             delete_user_db(u_id)
