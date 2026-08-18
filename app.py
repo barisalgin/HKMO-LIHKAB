@@ -48,7 +48,7 @@ if not st.session_state["authenticated"]:
             st.markdown("<p style='text-align: center; color: gray;'>Sisteme erişmek için yetkilendirilmiş bir hesaba ihtiyacınız var.</p>", unsafe_allow_html=True)
             login_user = st.text_input("Kullanıcı Adı")
             login_pass = st.text_input("Şifre", type="password")
-            if st.button("Giriş Yap", type="primary", use_column_width=True):
+            if st.button("Giriş Yap", type="primary", use_container_width=True):
                 from core import verify_user
                 perms = verify_user(login_user, login_pass)
                 if perms is not None:
