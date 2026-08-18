@@ -2,7 +2,7 @@ import psycopg2
 import json
 import os
 
-SUPABASE_URL = 'postgresql://postgres:barisalginHKMO@db.dmpbiioazwdrutyqxqzq.supabase.co:5432/postgres'
+SUPABASE_URL = 'postgresql://postgres.dmpbiioazwdrutyqxqzq:barisalginHKMO@aws-1-eu-west-1.pooler.supabase.com:5432/postgres'
 
 def get_connection():
     return psycopg2.connect(SUPABASE_URL)
